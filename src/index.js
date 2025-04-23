@@ -4,7 +4,19 @@ import dotenv from "dotenv";
 dotenv.config({
   path: "./env",
 });
-connectDB();
+connectDB()
+  .then(() => {
+    app.on("error", (error) => {
+      console.log("Error before app listening", error);
+      throw error;
+    });
+    app.listen(process.env.PORT || 8080, () => {
+      console.log(`Server is running is port ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    "Mongo DB connection error", err;
+  });
 
 /*
 import express from "express";
