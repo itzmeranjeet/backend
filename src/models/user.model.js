@@ -49,6 +49,11 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+// Before saving a user document, this middleware checks if the password field has been modified.
+// If the password has not been modified, it skips further processing by calling `next()`.
+// If the password has been modified, it hashes the password using bcrypt with a salt round of 10
+// and then proceeds to the next middleware or saves the
+
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return next();
 
@@ -56,10 +61,20 @@ userSchema.pre("save", async function () {
   next();
 });
 
+// This method is used to compare a plain text password with the hashed password stored in the database.
+// It uses bcrypt's `compare` function to check if the provided password matches the hashed password.
+// Returns `true` if the passwords match, otherwise `false`.
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password); 
+
+  /*password:  This is the plain text password provided by the user (e.g., during login). this.password: This is the hashed password stored in the database for the user.*/
+  
 };
 
+// This method generates a JSON Web Token (JWT) for user authentication.
+// The token contains the user's `_id`, `email`, `username`, and `fullName` as payload data.
+// It uses the secret key defined in `process.env.ACCESS_TOKEN_SECRET` to sign the token.
+// The token's expiration time is set based on `process.env.ACCESS_TOKEN_EXPIRY`.
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {

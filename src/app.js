@@ -16,4 +16,10 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" })); // Used when dat
 app.use(express.static("public")); // for if we want store image/file / // Serves static files like images or other assets from the 'public' directory.
 app.use(cookieParser()); // cookieParser is used when we want to set or access cookies from the server in the browser.
 
+//Routes
+import userRouter from "./routes/user.routes.js";
+
+//route declaration
+app.use("/api/v1/users", userRouter); //Now url will be "http://localhost:8000/api/v1/users/register"
+
 export { app };
