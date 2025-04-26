@@ -54,7 +54,7 @@ const userSchema = new Schema(
 // If the password has been modified, it hashes the password using bcrypt with a salt round of 10
 // and then proceeds to the next middleware or saves the
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
